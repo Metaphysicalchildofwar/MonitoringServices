@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace MonitoringServices.ViewModels.Base
 {
+    /// <summary>
+    /// Базовый класс для ViewModel
+    /// </summary>
     internal abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace MonitoringServices.Commands.Base
 {
+    /// <summary>
+    /// Базовый класс для команды
+    /// </summary>
     internal abstract class BaseCommand : ICommand
     {
         public event EventHandler CanExecuteChanged

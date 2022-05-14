@@ -13,6 +13,9 @@ using System.Windows.Input;
 
 namespace MonitoringServices.ViewModels
 {
+    /// <summary>
+    /// Класс для ViewModel
+    /// </summary>
     internal class MainViewModel : ViewModelBase
     {
         public ObservableCollection<ServiceModel> Services { get; set; } = new ObservableCollection<ServiceModel>();
@@ -34,6 +37,9 @@ namespace MonitoringServices.ViewModels
             set => Set(ref _selectedService, value);
         }
 
+        /// <summary>
+        /// Останавливает службу
+        /// </summary>
         public ICommand StopServiceCommand { get; }
         private bool CanStopServiceCommandExecute(object p) => true;
         private void OnStopServiceCommandExecuted(object p)
@@ -41,6 +47,9 @@ namespace MonitoringServices.ViewModels
             new Task(() => Actions.StopService((string)p)).Start();
         }
 
+        /// <summary>
+        /// Запускает службу
+        /// </summary>
         public ICommand StartServiceCommand { get; }
         private bool CanStartServiceCommandExecute(object p) => true;
         private void OnStartServiceCommandExecuted(object p)
@@ -48,6 +57,9 @@ namespace MonitoringServices.ViewModels
             new Task(() => Actions.StartService((string)p)).Start();
         }
 
+        /// <summary>
+        /// Запускает мониторинг за службами
+        /// </summary>
         private void StartMonitoringServices()
         {
             try

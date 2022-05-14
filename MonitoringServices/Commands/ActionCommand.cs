@@ -3,6 +3,9 @@ using System;
 
 namespace MonitoringServices.Commands
 {
+    /// <summary>
+    /// Класс для команды
+    /// </summary>
     internal class ActionCommand : BaseCommand
     {
         private readonly Action<object> _execute;

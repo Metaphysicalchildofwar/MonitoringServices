@@ -4,13 +4,20 @@ using System.Windows;
 
 namespace MonitoringServices.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     internal class ActionsForServices
     {
-        public void StartService(string p)
+        /// <summary>
+        /// Запускает службу
+        /// </summary>
+        /// <param name="nameService">Наименование службы</param>
+        public void StartService(string nameService)
         {
             try
             {
-                ServiceController service = new ServiceController(p);
+                ServiceController service = new ServiceController(nameService);
 
                 if (service.Status != ServiceControllerStatus.Running)
                 {
@@ -28,11 +35,15 @@ namespace MonitoringServices.Services
             };
         }
 
-        public void StopService(string p)
+        /// <summary>
+        /// Останавливает службу
+        /// </summary>
+        /// <param name="">Наименование службы</param>
+        public void StopService(string nameService)
         {
             try
             {
-                ServiceController service = new ServiceController((string)p);
+                ServiceController service = new ServiceController(nameService);
 
                 if (service.Status != ServiceControllerStatus.Stopped)
                 {
