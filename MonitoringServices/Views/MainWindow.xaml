@@ -11,7 +11,10 @@
         <vm:MainViewModel />
     </Window.DataContext>
     <Grid>
-        <ListBox Grid.RowSpan="2" ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}">
+        <ListBox Grid.RowSpan="2" 
+                 ItemsSource="{Binding Services}" 
+                 SelectedItem="{Binding SelectedService}"
+                 SelectedIndex="0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="5">

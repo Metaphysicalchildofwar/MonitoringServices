@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MonitoringServices.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace MonitoringServices.Services
@@ -18,6 +19,14 @@ namespace MonitoringServices.Services
             foreach (T item in list)
             {
                 observableCollection.Add(item);
+            }
+        }
+
+        public static void RemoveRange<T>(this ObservableCollection<T> observableCollection, ICollection<T> list)
+        {
+            foreach (T item in list)
+            {
+                observableCollection.Remove(item);
             }
         }
     }

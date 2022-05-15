@@ -1,6 +1,6 @@
-﻿using MonitoringServices.Models.Base;
-using MonitoringServices.ViewModels.Base;
-using System.Linq;
+﻿using MonitoringServices.ViewModels.Base;
+using System.Collections.Generic;
+using System.ServiceProcess;
 
 namespace MonitoringServices.Models
 {
@@ -9,7 +9,14 @@ namespace MonitoringServices.Models
     /// </summary>
     internal class ServiceModel : ViewModelBase
     {
+        private readonly ICollection<string> _stopStatuses = new string[] { ServiceControllerStatus.Stopped.ToString(), ServiceControllerStatus.StopPending.ToString(), ServiceControllerStatus.PausePending.ToString(), ServiceControllerStatus.Paused.ToString() };
+        
         private string _name;
+        private string _displayName;
+        private string _status;
+        private string _account;
+        private bool _stopEnable;
+        private bool _startEnable;
 
         /// <summary>
         /// Наименование службы
@@ -20,8 +27,6 @@ namespace MonitoringServices.Models
             set => Set(ref _name, value);
         }
 
-        private string _displayName;
-
         /// <summary>
         /// Наименование службы
         /// </summary>
@@ -30,8 +35,6 @@ namespace MonitoringServices.Models
             get => _displayName;
             set => Set(ref _displayName, value);
         }
-
-        private string _status;
 
         /// <summary>
         /// Статус службы
@@ -43,12 +46,10 @@ namespace MonitoringServices.Models
             {
                 Set(ref _status, value);
 
-                StopEnable = !StopStatuses.Statuses.Contains(_status);
-                StartEnable = StopStatuses.Statuses.Contains(_status);
+                StopEnable = !_stopStatuses.Contains(_status);
+                StartEnable = _stopStatuses.Contains(_status);
             }
         }
-
-        private string _account;
 
         /// <summary>
         /// Пользователь, с которого запущена служба
@@ -59,8 +60,6 @@ namespace MonitoringServices.Models
             set => Set(ref _account, value);
         }
 
-        private bool _stopEnable;
-
         /// <summary>
         /// Признак возможности остановить службу
         /// </summary>
@@ -69,8 +68,6 @@ namespace MonitoringServices.Models
             get => _stopEnable;
             set => Set(ref _stopEnable, value);
         }
-
-        private bool _startEnable;
 
         /// <summary>
         /// Признак возможности запустить службу

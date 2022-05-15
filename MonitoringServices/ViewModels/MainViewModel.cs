@@ -68,29 +68,43 @@ namespace MonitoringServices.ViewModels
             try
             {
                 var services = Actions.GetServices();
-
                 Services.AddRange(services);
-                SelectedService = Services.FirstOrDefault();
 
                 while (true)
                 {
-                    services = Actions.GetServices();
-
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        foreach (var service in services)
+                        try
                         {
-                            if (Services.Any(x => x.DisplayName == service.DisplayName))
+                            foreach (var service in Services.ToList())
                             {
-                                Services.FirstOrDefault(x => x.DisplayName == service.DisplayName).Status = service.Status;
+                                if (!services.Any(x => x.DisplayName == service.DisplayName))
+                                {
+                                    Services.Remove(service);
+                                }
                             }
-                            else
+
+                            foreach (var service in services.ToList())
                             {
-                                Services.Add(service);
+                                if (Services.Any(x => x.DisplayName == service.DisplayName))
+                                {
+                                    var serv = Services.FirstOrDefault(x => x.DisplayName == service.DisplayName);
+                                    serv.Status = service.Status;
+                                }
+                                else
+                                {
+                                    Services.Add(service);
+                                }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"В результате работы произошла ошибка: {ex.Message}");
                         }
                     }));
                     Thread.Sleep(1000);
+
+                    services = Actions.GetServices();
                 }
             }
             catch (Exception ex)
