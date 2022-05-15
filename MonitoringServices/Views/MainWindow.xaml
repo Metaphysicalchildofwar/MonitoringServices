@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MonitoringServices"
         xmlns:vm="clr-namespace:MonitoringServices.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="354" Width="699">
+        Title="MonitoringServices" Height="354" Width="699">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
@@ -36,18 +36,20 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
+                <ColumnDefinition Width ="90" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
         </Grid>
 
         <Grid Grid.Column="1" Grid.Row="1">
-            <Button Content="Запустить службу" 
+            <Button Template="{StaticResource btTemplate}" 
+                    Content="Запустить службу" 
                     IsEnabled="{Binding SelectedService.StartEnable, 
                 Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Command="{Binding StartServiceCommand}" 
                     CommandParameter="{Binding SelectedService.DisplayName}" />
-            <Button Grid.Column="1" 
+            <Button Template="{StaticResource btTemplate}"
+                Grid.Column="1" 
                     IsEnabled="{Binding SelectedService.StopEnable, 
                 Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     Content="Остановить службу" 

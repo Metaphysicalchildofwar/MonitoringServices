@@ -1,11 +1,14 @@
-﻿using System;
+﻿using MonitoringServices.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceProcess;
 using System.Windows;
 
 namespace MonitoringServices.Services
 {
     /// <summary>
-    /// 
+    /// Класс для действий над службами
     /// </summary>
     internal class ActionsForServices
     {
@@ -59,6 +62,21 @@ namespace MonitoringServices.Services
             {
                 MessageBox.Show($"При остановке службы произошла ошибка: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Получает коллекцию служб
+        /// </summary>
+        /// <returns>Коллекция служб</returns>
+        public ICollection<ServiceModel> GetServices()
+        {
+            return ServiceController.GetServices().Select(x => new ServiceModel
+            {
+                DisplayName = x.DisplayName,
+                Name = x.ServiceName,
+                Account = x.MachineName,
+                Status = x.Status.ToString()
+            }).ToList();
         }
     }
 }

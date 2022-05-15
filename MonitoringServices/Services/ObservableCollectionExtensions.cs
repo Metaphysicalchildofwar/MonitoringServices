@@ -4,12 +4,12 @@ using System.Collections.ObjectModel;
 namespace MonitoringServices.Services
 {
     /// <summary>
-    /// Частичный класс для расширений ObservableCollections
+    /// Класс для расширений коллецкии ObservableCollections
     /// </summary>
     internal static class ObservableCollectionExtensions
     {
         /// <summary>
-        /// Добавляет несколько записей в ObservableCollection
+        /// Добавляет список в коллекцию
         /// </summary>
         /// <param name="observableCollection">Текущая коллекция</param>
         /// <param name="list">Список элементов для добавления</param>

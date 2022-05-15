@@ -5,7 +5,6 @@ using MonitoringServices.ViewModels.Base;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,6 +30,10 @@ namespace MonitoringServices.ViewModels
             new Task(() => StartMonitoringServices()).Start();
         }
         private ServiceModel _selectedService;
+
+        /// <summary>
+        /// Выбранная служба
+        /// </summary>
         public ServiceModel SelectedService
         {
             get => _selectedService;
@@ -41,20 +44,20 @@ namespace MonitoringServices.ViewModels
         /// Останавливает службу
         /// </summary>
         public ICommand StopServiceCommand { get; }
-        private bool CanStopServiceCommandExecute(object p) => true;
-        private void OnStopServiceCommandExecuted(object p)
+        private bool CanStopServiceCommandExecute(object nameService) => true;
+        private void OnStopServiceCommandExecuted(object nameService)
         {
-            new Task(() => Actions.StopService((string)p)).Start();
+            new Task(() => Actions.StopService((string)nameService)).Start();
         }
 
         /// <summary>
         /// Запускает службу
         /// </summary>
         public ICommand StartServiceCommand { get; }
-        private bool CanStartServiceCommandExecute(object p) => true;
-        private void OnStartServiceCommandExecuted(object p)
+        private bool CanStartServiceCommandExecute(object nameService) => true;
+        private void OnStartServiceCommandExecuted(object nameService)
         {
-            new Task(() => Actions.StartService((string)p)).Start();
+            new Task(() => Actions.StartService((string)nameService)).Start();
         }
 
         /// <summary>
@@ -64,48 +67,30 @@ namespace MonitoringServices.ViewModels
         {
             try
             {
-                ServiceController[] services = ServiceController.GetServices();
+                var services = Actions.GetServices();
 
-                Services.AddRange(services.Select(x => new ServiceModel
-                {
-                    DisplayName = x.DisplayName,
-                    Name = x.ServiceName,
-                    Account = x.MachineName,
-                    Status = x.Status.ToString()
-                }).ToList());
+                Services.AddRange(services);
                 SelectedService = Services.FirstOrDefault();
 
                 while (true)
                 {
-                    Thread.Sleep(1000);
+                    services = Actions.GetServices();
 
-                    services = ServiceController.GetServices();
-
-                    Application.Current.Dispatcher.Invoke(delegate
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        foreach (ServiceController s in services)
+                        foreach (var service in services)
                         {
-                            if (Services.Any(x => x.DisplayName == s.DisplayName))
+                            if (Services.Any(x => x.DisplayName == service.DisplayName))
                             {
-                                ServiceModel needService = Services.FirstOrDefault(x => x.DisplayName == s.DisplayName);
-                                needService.DisplayName = s.DisplayName;
-                                needService.Status = s.Status.ToString();
-                                needService.Name = s.ServiceName;
-                                needService.Account = s.MachineName;
+                                Services.FirstOrDefault(x => x.DisplayName == service.DisplayName).Status = service.Status;
                             }
                             else
                             {
-                                Services.Add(new ServiceModel
-                                {
-                                    Status = s.Status.ToString(),
-                                    Account = s.MachineName,
-                                    Name = s.ServiceName,
-                                    DisplayName = s.DisplayName
-                                });
+                                Services.Add(service);
                             }
                         }
-                    });
-
+                    }));
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
