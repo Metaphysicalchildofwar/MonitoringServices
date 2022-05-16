@@ -93,12 +93,12 @@ namespace MonitoringServices.Services
         /// <returns>Коллекция служб</returns>
         public ICollection<ServiceModel> GetServices()
         {
-            var userNames = GetUserNameFromService();
+            var accounts = GetAccountsFromService();
             return ServiceController.GetServices().Select(x => new ServiceModel
             {
                 DisplayName = x.DisplayName,
                 Name = x.ServiceName,
-                Account = userNames.FirstOrDefault(x => x.ServiceName == x.ServiceName).UserName,
+                Account = accounts.FirstOrDefault(y => y.ServiceName == x.ServiceName).UserName,
                 Status = x.Status.ToString()
             }).ToList();
         }
@@ -107,18 +107,18 @@ namespace MonitoringServices.Services
         /// Получает коллекцию аккаунтов, с которых была запущена служба
         /// </summary>
         /// <returns>Коллекция</returns>
-        private ICollection<UserNameSeviceModel> GetUserNameFromService()
+        private ICollection<AccountsModel> GetAccountsFromService()
         {
-            var userNames = new List<UserNameSeviceModel>();
+            var accounts = new List<AccountsModel>();
             SelectQuery sQuery = new SelectQuery(string.Format("select name, startname from Win32_Service"));
             using (ManagementObjectSearcher mgmtSearcher = new ManagementObjectSearcher(sQuery))
             {
                 foreach (ManagementObject service in mgmtSearcher.Get())
                 {
-                    userNames.Add(new UserNameSeviceModel { UserName = service["startname"]?.ToString(), ServiceName = service["Name"]?.ToString() });
+                    accounts.Add(new AccountsModel { UserName = service["startname"]?.ToString(), ServiceName = service["Name"]?.ToString() });
                 }
             }
-            return userNames;
+            return accounts;
         }
     }
 }
