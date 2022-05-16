@@ -47,7 +47,7 @@ namespace MonitoringServices.ViewModels
         private bool CanStopServiceCommandExecute(object nameService) => true;
         private void OnStopServiceCommandExecuted(object nameService)
         {
-            new Task(() => Actions.StopService((string)nameService)).Start();
+            new Task(() => Actions.StopService((string)nameService, SelectedService)).Start();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MonitoringServices.ViewModels
         private bool CanStartServiceCommandExecute(object nameService) => true;
         private void OnStartServiceCommandExecuted(object nameService)
         {
-            new Task(() => Actions.StartService((string)nameService)).Start();
+            new Task(() => Actions.StartService((string)nameService, SelectedService)).Start();
         }
 
         /// <summary>
@@ -68,40 +68,64 @@ namespace MonitoringServices.ViewModels
             try
             {
                 var services = Actions.GetServices();
-                Services.AddRange(services);
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        Services.AddRange(services);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }));
 
                 while (true)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    foreach (var service in Services.ToList())
                     {
-                        try
+                        if (!services.Any(x => x.DisplayName == service.DisplayName))
                         {
-                            foreach (var service in Services.ToList())
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                             {
-                                if (!services.Any(x => x.DisplayName == service.DisplayName))
+                                try
                                 {
                                     Services.Remove(service);
                                 }
-                            }
-
-                            foreach (var service in services.ToList())
-                            {
-                                if (Services.Any(x => x.DisplayName == service.DisplayName))
+                                catch (Exception ex)
                                 {
-                                    var serv = Services.FirstOrDefault(x => x.DisplayName == service.DisplayName);
-                                    serv.Status = service.Status;
+                                    MessageBox.Show(ex.Message);
                                 }
-                                else
+                            }));
+                        }
+                    }
+
+                    foreach (var service in services.ToList())
+                    {
+                        if (Services.Any(x => x.DisplayName == service.DisplayName))
+                        {
+                            var serv = Services.FirstOrDefault(x => x.DisplayName == service.DisplayName);
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                serv.Status = service.Status;
+                            }));
+                        }
+                        else
+                        {
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                try
                                 {
                                     Services.Add(service);
                                 }
-                            }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(ex.Message);
+                                }
+                            }));
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"В результате работы произошла ошибка: {ex.Message}");
-                        }
-                    }));
+                    }
+
                     Thread.Sleep(1000);
 
                     services = Actions.GetServices();

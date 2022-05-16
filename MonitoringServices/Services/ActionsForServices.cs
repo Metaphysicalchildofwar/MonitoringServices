@@ -16,7 +16,7 @@ namespace MonitoringServices.Services
         /// Запускает службу
         /// </summary>
         /// <param name="nameService">Наименование службы</param>
-        public void StartService(string nameService)
+        public void StartService(string nameService, ServiceModel selectedService)
         {
             try
             {
@@ -25,7 +25,18 @@ namespace MonitoringServices.Services
                 if (service.Status != ServiceControllerStatus.Running)
                 {
                     service.Start();
-                    MessageBox.Show("Служба была успешно запущена!");
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            selectedService.Status = ServiceControllerStatus.Running.ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }));
+                    MessageBox.Show("Служба успешно запущена!");
                 }
                 else
                 {
@@ -42,7 +53,7 @@ namespace MonitoringServices.Services
         /// Останавливает службу
         /// </summary>
         /// <param name="">Наименование службы</param>
-        public void StopService(string nameService)
+        public void StopService(string nameService, ServiceModel selectedService)
         {
             try
             {
@@ -51,7 +62,18 @@ namespace MonitoringServices.Services
                 if (service.Status != ServiceControllerStatus.Stopped)
                 {
                     service.Stop();
-                    MessageBox.Show("Служба была успешно остановлена!");
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            selectedService.Status = ServiceControllerStatus.Stopped.ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }));
+                    MessageBox.Show("Служба успешно остановлена!");
                 }
                 else
                 {

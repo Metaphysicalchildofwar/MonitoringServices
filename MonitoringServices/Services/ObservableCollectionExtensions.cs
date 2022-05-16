@@ -21,13 +21,5 @@ namespace MonitoringServices.Services
                 observableCollection.Add(item);
             }
         }
-
-        public static void RemoveRange<T>(this ObservableCollection<T> observableCollection, ICollection<T> list)
-        {
-            foreach (T item in list)
-            {
-                observableCollection.Remove(item);
-            }
-        }
     }
 }
