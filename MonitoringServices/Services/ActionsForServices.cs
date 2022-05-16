@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.ServiceProcess;
 using System.Windows;
 
@@ -36,16 +37,16 @@ namespace MonitoringServices.Services
                             MessageBox.Show(ex.Message);
                         }
                     }));
-                    MessageBox.Show("Служба успешно запущена!");
+                    MessageBox.Show($"Служба '{nameService}' запущена!");
                 }
                 else
                 {
-                    MessageBox.Show("Служба уже запущена!");
+                    MessageBox.Show($"Служба '{nameService}' уже запущена!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"При запуске службы произошла ошибка: {ex.Message}");
+                MessageBox.Show($"При запуске службы '{nameService}' произошла ошибка: {ex.Message}");
             };
         }
 
@@ -73,16 +74,16 @@ namespace MonitoringServices.Services
                             MessageBox.Show(ex.Message);
                         }
                     }));
-                    MessageBox.Show("Служба успешно остановлена!");
+                    MessageBox.Show($"Служба '{nameService}' остановлена!");
                 }
                 else
                 {
-                    MessageBox.Show("Служба уже остановлена!");
+                    MessageBox.Show($"Служба '{nameService}' уже остановлена!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"При остановке службы произошла ошибка: {ex.Message}");
+                MessageBox.Show($"При остановке службы '{nameService}' произошла ошибка: {ex.Message}");
             }
         }
 
@@ -92,13 +93,32 @@ namespace MonitoringServices.Services
         /// <returns>Коллекция служб</returns>
         public ICollection<ServiceModel> GetServices()
         {
+            var userNames = GetUserNameFromService();
             return ServiceController.GetServices().Select(x => new ServiceModel
             {
                 DisplayName = x.DisplayName,
                 Name = x.ServiceName,
-                Account = x.MachineName,
+                Account = userNames.FirstOrDefault(x => x.ServiceName == x.ServiceName).UserName,
                 Status = x.Status.ToString()
             }).ToList();
+        }
+
+        /// <summary>
+        /// Получает коллекцию 
+        /// </summary>
+        /// <returns>Коллекция</returns>
+        private List<UserNameSeviceModel> GetUserNameFromService()
+        {
+            var userNames = new List<UserNameSeviceModel>();
+            SelectQuery sQuery = new SelectQuery(string.Format("select name, startname from Win32_Service"));
+            using (ManagementObjectSearcher mgmtSearcher = new ManagementObjectSearcher(sQuery))
+            {
+                foreach (ManagementObject service in mgmtSearcher.Get())
+                {
+                    userNames.Add(new UserNameSeviceModel { UserName = service["startname"]?.ToString(), ServiceName = service["Name"]?.ToString() });
+                }
+            }
+            return userNames;
         }
     }
 }
