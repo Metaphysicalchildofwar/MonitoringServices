@@ -104,10 +104,10 @@ namespace MonitoringServices.Services
         }
 
         /// <summary>
-        /// Получает коллекцию 
+        /// Получает коллекцию аккаунтов, с которых была запущена служба
         /// </summary>
         /// <returns>Коллекция</returns>
-        private List<UserNameSeviceModel> GetUserNameFromService()
+        private ICollection<UserNameSeviceModel> GetUserNameFromService()
         {
             var userNames = new List<UserNameSeviceModel>();
             SelectQuery sQuery = new SelectQuery(string.Format("select name, startname from Win32_Service"));
