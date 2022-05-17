@@ -8,7 +8,7 @@
         /// <summary>
         /// Аккаунт
         /// </summary>
-        public string UserName { get; set; }
+        public string Account { get; set; }
 
         /// <summary>
         /// Наименование службы

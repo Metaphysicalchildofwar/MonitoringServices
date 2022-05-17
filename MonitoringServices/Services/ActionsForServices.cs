@@ -17,6 +17,7 @@ namespace MonitoringServices.Services
         /// Запускает службу
         /// </summary>
         /// <param name="nameService">Наименование службы</param>
+        /// <param name="selectedService">Выбранная служба</param>
         public void StartService(string nameService, ServiceModel selectedService)
         {
             try
@@ -53,7 +54,8 @@ namespace MonitoringServices.Services
         /// <summary>
         /// Останавливает службу
         /// </summary>
-        /// <param name="">Наименование службы</param>
+        /// <param name="nameService">Наименование службы</param>
+        /// <param name="selectedService">Выбранная служба</param>
         public void StopService(string nameService, ServiceModel selectedService)
         {
             try
@@ -98,7 +100,7 @@ namespace MonitoringServices.Services
             {
                 DisplayName = x.DisplayName,
                 Name = x.ServiceName,
-                Account = accounts.FirstOrDefault(y => y.ServiceName == x.ServiceName).UserName,
+                Account = accounts.FirstOrDefault(y => y.ServiceName == x.ServiceName)?.Account,
                 Status = x.Status.ToString()
             }).ToList();
         }
@@ -115,7 +117,7 @@ namespace MonitoringServices.Services
             {
                 foreach (ManagementObject service in mgmtSearcher.Get())
                 {
-                    accounts.Add(new AccountsModel { UserName = service["startname"]?.ToString(), ServiceName = service["Name"]?.ToString() });
+                    accounts.Add(new AccountsModel { Account = service["startname"]?.ToString(), ServiceName = service["Name"]?.ToString() });
                 }
             }
             return accounts;
