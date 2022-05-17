@@ -3,7 +3,7 @@
     /// <summary>
     /// Модель для аккаунта, с которого запущена служба
     /// </summary>
-    public class AccountsModel
+    internal class AccountsModel
     {
         /// <summary>
         /// Аккаунт

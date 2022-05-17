@@ -95,14 +95,22 @@ namespace MonitoringServices.Services
         /// <returns>Коллекция служб</returns>
         public ICollection<ServiceModel> GetServices()
         {
-            var accounts = GetAccountsFromService();
-            return ServiceController.GetServices().Select(x => new ServiceModel
+            try
             {
-                DisplayName = x.DisplayName,
-                Name = x.ServiceName,
-                Account = accounts.FirstOrDefault(y => y.ServiceName == x.ServiceName)?.Account,
-                Status = x.Status.ToString()
-            }).ToList();
+                var accounts = GetAccountsFromService();
+                return ServiceController.GetServices().Select(x => new ServiceModel
+                {
+                    DisplayName = x.DisplayName,
+                    Name = x.ServiceName,
+                    Account = accounts.FirstOrDefault(y => y.ServiceName == x.ServiceName)?.Account,
+                    Status = x.Status.ToString()
+                }).ToList();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"При получении служб произошла ошибка: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>
